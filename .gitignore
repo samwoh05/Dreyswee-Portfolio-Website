@@ -1,0 +1,6 @@
+# Editor / tooling settings — keep them local, out of the published site
+.vscode/
+.claude/
+
+# macOS
+.DS_Store
