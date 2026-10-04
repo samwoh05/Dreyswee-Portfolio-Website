@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Replace https://www.example.com with the live domain before submitting to search engines. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://www.example.com/</loc><lastmod>2026-10-04</lastmod><changefreq>monthly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://www.example.com/work/dettol.html</loc><lastmod>2026-10-04</lastmod><changefreq>yearly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.example.com/work/outward-bound.html</loc><lastmod>2026-10-04</lastmod><changefreq>yearly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.example.com/work/ctv.html</loc><lastmod>2026-10-04</lastmod><changefreq>yearly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.example.com/work/d3.html</loc><lastmod>2026-10-04</lastmod><changefreq>yearly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.example.com/work/vlogs.html</loc><lastmod>2026-10-04</lastmod><changefreq>yearly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.example.com/work/nkf.html</loc><lastmod>2026-10-04</lastmod><changefreq>yearly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.example.com/work/converse.html</loc><lastmod>2026-10-04</lastmod><changefreq>yearly</changefreq><priority>0.8</priority></url>
+</urlset>

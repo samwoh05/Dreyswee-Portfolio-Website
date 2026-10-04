@@ -1,0 +1,5 @@
+# Replace https://www.example.com with the live domain.
+User-agent: *
+Allow: /
+
+Sitemap: https://www.example.com/sitemap.xml
