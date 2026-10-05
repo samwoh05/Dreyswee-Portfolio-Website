@@ -4,3 +4,6 @@
 
 # macOS
 .DS_Store
+
+# Brag launch-video output (renders, copied media) — not part of the published site
+brag-output*/
