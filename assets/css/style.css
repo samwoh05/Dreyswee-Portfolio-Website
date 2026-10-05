@@ -770,6 +770,11 @@ html:not(.js) .hero__swoosh path { stroke-dashoffset: 0; }
 ::view-transition-new(root) { animation: .8s var(--glide) both vt-in; }
 @keyframes vt-out { to { opacity: 0; filter: blur(12px); transform: scale(1.02); } }
 @keyframes vt-in { from { opacity: 0; filter: blur(12px); transform: scale(.985); } }
+/* in-page changes (filters, grid/list): a plain cross-fade, so the bar and headings hold still */
+.vt-local::view-transition-old(root) { animation: .4s var(--glide) both vt-fade-out; }
+.vt-local::view-transition-new(root) { animation: .4s var(--glide) both vt-fade-in; }
+@keyframes vt-fade-out { to { opacity: 0; } }
+@keyframes vt-fade-in { from { opacity: 0; } }
 ::view-transition-group(*) { animation-duration: .8s; animation-timing-function: var(--glide); }
 
 /* ==========================================================================

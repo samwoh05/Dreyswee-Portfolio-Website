@@ -13,12 +13,17 @@
     get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
     set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* storage unavailable */ } },
   };
+  // In-page transitions (filters, grid/list). `vt-local` tells the CSS to keep the page still
+  // and only move the cards; the zoom-blur is reserved for moving between pages.
+  let localVts = 0;
   const vt = (fn) => {
     if (!d.startViewTransition || reduce) return fn();
+    localVts++;
+    root.classList.add('vt-local');
     const t = d.startViewTransition(fn);
     // skipped when clicks overlap or the tab is hidden; the DOM update still runs
     t.ready.catch(() => {});
-    t.finished.catch(() => {});
+    t.finished.catch(() => {}).finally(() => { if (--localVts === 0) root.classList.remove('vt-local'); });
     return t;
   };
   const SPARK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.6 6.2 5.8 11.4 12 12-6.2.6-11.4 5.8-12 12-.6-6.2-5.8-11.4-12-12C6.2 11.4 11.4 6.2 12 0z"/></svg>';
