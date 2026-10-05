@@ -13,7 +13,14 @@
     get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
     set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* storage unavailable */ } },
   };
-  const vt = (fn) => (d.startViewTransition && !reduce) ? d.startViewTransition(fn) : fn();
+  const vt = (fn) => {
+    if (!d.startViewTransition || reduce) return fn();
+    const t = d.startViewTransition(fn);
+    // skipped when clicks overlap or the tab is hidden; the DOM update still runs
+    t.ready.catch(() => {});
+    t.finished.catch(() => {});
+    return t;
+  };
   const SPARK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.6 6.2 5.8 11.4 12 12-6.2.6-11.4 5.8-12 12-.6-6.2-5.8-11.4-12-12C6.2 11.4 11.4 6.2 12 0z"/></svg>';
 
   /* ---------- Split hero letters (they "dance" on hover) ---------- */
@@ -159,31 +166,6 @@
       boxes.forEach((b) => io.observe(b));
     }
     addEventListener('pagehide', () => boxes.forEach(stop));
-  }
-
-  /* ---------- Flipbook cards ---------- */
-  function flipbooks() {
-    $$('[data-flipbook]').forEach((fb) => {
-      const imgs = $$('img', fb);
-      const count = $('.flipbook__count', fb);
-      let i = 0, timer = 0;
-      const show = (n) => {
-        imgs.forEach((im, k) => im.classList.toggle('is-active', k === n));
-        if (count) count.textContent = `${pad(n + 1)} / ${pad(imgs.length)}`;
-      };
-      show(0);
-      if (reduce) return;
-      const start = (ms) => { if (timer) return; timer = setInterval(() => { i = (i + 1) % imgs.length; show(i); }, ms); };
-      const stop = () => { clearInterval(timer); timer = 0; };
-      if (fine) {
-        const trigger = fb.closest('a') || fb;
-        trigger.addEventListener('pointerenter', () => start(520));
-        trigger.addEventListener('pointerleave', () => { stop(); i = 0; show(0); });
-      } else {
-        const io = new IntersectionObserver((es) => es.forEach((e) => (e.isIntersecting ? start(1100) : stop())), { threshold: 0.5 });
-        io.observe(fb);
-      }
-    });
   }
 
   /* ---------- Card tilt + image parallax ---------- */
@@ -447,40 +429,6 @@
     });
   }
 
-  /* ---------- Carousels ---------- */
-  function carousels() {
-    $$('[data-carousel]').forEach((c) => {
-      const track = $('.carousel__track', c);
-      const slides = $$('.carousel__slide', c);
-      const prev = $('.carousel__btn--prev', c), next = $('.carousel__btn--next', c);
-      const dots = $('.carousel__dots', c);
-      const current = () => Math.round(track.scrollLeft / track.clientWidth);
-      const go = (n) => track.scrollTo({ left: clamp(n, 0, slides.length - 1) * track.clientWidth, behavior: reduce ? 'auto' : 'smooth' });
-      if (dots) slides.forEach((_, n) => {
-        const b = d.createElement('button');
-        b.type = 'button';
-        b.setAttribute('aria-label', `Go to slide ${n + 1} of ${slides.length}`);
-        b.addEventListener('click', () => go(n));
-        dots.appendChild(b);
-      });
-      const update = () => {
-        const n = current();
-        if (prev) prev.disabled = n <= 0;
-        if (next) next.disabled = n >= slides.length - 1;
-        if (dots) [...dots.children].forEach((b, k) => b.setAttribute('aria-current', String(k === n)));
-        slides.forEach((s, k) => s.setAttribute('aria-hidden', String(k !== n)));
-      };
-      prev && prev.addEventListener('click', () => go(current() - 1));
-      next && next.addEventListener('click', () => go(current() + 1));
-      track.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
-      track.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowRight') { e.preventDefault(); go(current() + 1); }
-        if (e.key === 'ArrowLeft') { e.preventDefault(); go(current() - 1); }
-      });
-      update();
-    });
-  }
-
   /* ---------- Tabs ---------- */
   function tabs() {
     $$('[data-tabs]').forEach((t) => {
@@ -558,22 +506,6 @@
     });
   }
 
-  /* ---------- Flip (guess the answer) ---------- */
-  function flips() {
-    $$('[data-flip]').forEach((f) => {
-      const btn = $('[data-flip-btn]', f);
-      const toggle = () => {
-        const on = f.classList.toggle('is-flipped');
-        btn.setAttribute('aria-pressed', String(on));
-        $('span', btn).textContent = on ? 'back to the question' : 'reveal the answer';
-        $('.guess__face--front', f).setAttribute('aria-hidden', String(on));
-        $('.guess__face--back', f).setAttribute('aria-hidden', String(!on));
-      };
-      btn.addEventListener('click', toggle);
-      $('.guess__card', f).addEventListener('click', toggle);
-    });
-  }
-
   /* ---------- Video players ---------- */
   function players() {
     $$('[data-player]').forEach((p) => {
@@ -641,7 +573,6 @@
   counters();
   heroParallax();
   hoverVideos();
-  flipbooks();
   cardMotion();
   work();
   cursor();
@@ -649,11 +580,9 @@
   magnetic();
   board();
   lightbox();
-  carousels();
   tabs();
   pickers();
   stacks();
-  flips();
   players();
   nextProject();
   subnav();
