@@ -7,3 +7,6 @@
 
 # Brag launch-video output (renders, copied media) — not part of the published site
 brag-output*/
+
+# Local design sources (hero chrome generator) — not part of the published site
+design-src/

@@ -120,7 +120,12 @@
   /* ---------- Hero pointer parallax ---------- */
   function heroParallax() {
     const hero = $('.hero');
-    if (!hero || !fine || reduce) return;
+    if (!hero) return;
+    // the chrome drift and light sweep pause once the hero has scrolled away
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(([e]) => hero.classList.toggle('is-off', !e.isIntersecting), { rootMargin: '120px 0px' }).observe(hero);
+    }
+    if (!fine || reduce) return;
     let tx = 0, ty = 0, x = 0, y = 0, raf = 0;
     const loop = () => {
       x = lerp(x, tx, 0.08); y = lerp(y, ty, 0.08);
